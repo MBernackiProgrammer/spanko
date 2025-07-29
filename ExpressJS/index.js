@@ -10,3 +10,5 @@ app.listen(port, () => {console.log(`App listening on port ${port}`)})
 
 const friendRoutes = require('./Routes/FriendRoutes')
 app.use('/friend', friendRoutes)
+
+app.get('/', (req, res) => {res.send(`Może działa.`)})

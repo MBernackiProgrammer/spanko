@@ -2,11 +2,12 @@ const express = require('express')
 const FriendController = require('./../Controllers/FriendController')
 const router = express.Router()
 
-router.get('/friend_get_list', FriendController.FriendGetList)
-router.delete('/friend_delete', FriendController.FriendDelete)
+router.get('/get_friend_list', FriendController.GetFriendList)
+router.delete('/end_friendship', FriendController.EndFriendship)
 
-router.get('/friend_request_get_list', FriendController.FriendRequestGetList)
-router.put('/friend_request_add', FriendController.FriendRequestAdd)
-router.delete('/friend_request_delete', FriendController.FriendRequestDelete)
+router.get('/get_friend_invitation_list', FriendController.GetFriendInvitationList)
+router.put('/send_friend_invitation', FriendController.SendFriendInvitation)
+router.put('/accept_friend_invitation', FriendController.AcceptFriendInvitation)
+router.delete('/decline_friend_invitation', FriendController.DeclineFriendInvitation)
 
 module.exports = router

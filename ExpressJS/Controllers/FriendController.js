@@ -1,24 +1,53 @@
-exports.FriendGetList = (req, res) => 
+exports.GetFriendList = (req, res) => 
 {
-    res.json({message: "FriendGetList endpoint works.",});
+    const userid = req.headers['userid'];
+
+    console.log(`Input ID -> ${userid}`);
+
+    res.json({message: "GetFriendList endpoint works.",});
 }
 
-exports.FriendDelete = (req, res) => 
+exports.EndFriendship = (req, res) => 
 {
-    res.json({message: "FriendDelete endpoint works.",});
+    const input = req.body;
+
+    console.log("Input. " +  JSON.stringify(input));
+
+    res.json({message: "EndFriendship endpoint works.",});
 }
 
-exports.FriendRequestGetList = (req, res) =>
+exports.GetFriendInvitationList = (req, res) =>
 {
-    res.json({message: "FriendRequestGetList endpoint works.",});
+    const userid = req.headers['userid'];
+
+    console.log(`Input ID -> ${userid}`);
+
+    res.json({message: "GetFriendRequestList endpoint works.",});
 }
 
-exports.FriendRequestAdd = (req, res) => 
+exports.SendFriendInvitation = (req, res) => 
 {
-    res.json({message: "FriendRequestAdd endpoint works.",});
+    const input = req.body;
+
+    console.log("Input. " +  JSON.stringify(input));
+
+    res.json({message: "RequestFriendship endpoint works.",});
 }
 
-exports.FriendRequestDelete = (req, res) => 
+exports.AcceptFriendInvitation = (req, res) => 
 {
-    res.json({message: "FriendRequestDelete endpoint works.",});
-}  
+    const input = req.body;
+
+    console.log("Input. " +  JSON.stringify(input));
+
+    res.json({message: "AcceptFriendInvitation endpoint works.",});
+}
+
+exports.DeclineFriendInvitation = (req, res) => 
+{
+    const input = req.body;
+
+    console.log("Input. " +  JSON.stringify(input));
+
+    res.json({message: "DeclineFriendInvitation endpoint works.",});
+}
