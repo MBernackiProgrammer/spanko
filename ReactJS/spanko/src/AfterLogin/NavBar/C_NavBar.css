@@ -1,0 +1,36 @@
+.C_NavBar_D_MainFrame
+{
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.D_Content
+{
+    flex: 1;
+    position: relative;
+}
+
+.D_NavBar
+{
+    height: 60px;
+    background-color: var(--navbar-bg-color);
+}
+
+.D_NavBar_Center
+{
+    display: flex;
+    justify-content: center;
+}
+
+.D_NavBar_Box
+{
+    height: 120px;
+    background-color: var(--navbar-bg-color);
+    width: 200px;
+}
