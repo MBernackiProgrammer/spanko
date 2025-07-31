@@ -1,6 +1,6 @@
-import './AL_Profile.css';
+import './AL_Ranking.css';
 
-export default function AL_Profile() {
+export default function AL_Ranking() {
   return (
     <>
       <div className='AL_MainPage_D_MainFrame'>
