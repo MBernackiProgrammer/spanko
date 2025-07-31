@@ -1,5 +1,5 @@
 import './C_NavBar.css';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 export default function C_NavBar({ children }: { children: React.ReactNode }) {
   return (
@@ -36,21 +36,24 @@ export default function C_NavBar({ children }: { children: React.ReactNode }) {
         <div className='D_NavBar'>
             <div className='D_ContentHolder'>
               <div className='D_Nav'>
-                <a href="/profile">
+
+                <NavLink className="D_NavHolder" to="/rank">
                   <div className='D_NavHolder'>
                     <img src="./rank.png" />
                   </div>
-                </a>
+                </NavLink>
 
-                
+                <NavLink className="D_NavHolder"  to="/profile">
+                  <div className='D_NavHolder'>
+                    <img src='./profile.png'></img>
+                  </div>
+                </NavLink>
 
-                <div className='D_NavHolder'>
-                  <img src='./profile.png'></img>
-                </div>
-
-                <div className='D_NavHolder'>
-                  <img src='./settings.png'></img>
-                </div>
+                <NavLink className="D_NavHolder"  to="/settings">
+                  <div className='D_NavHolder'>
+                    <img src='./settings.png'></img>
+                  </div>
+                </NavLink>
               </div>
 
               <div className='D_Content'>
