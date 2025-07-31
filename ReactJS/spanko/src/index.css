@@ -1,0 +1,19 @@
+:root {
+  --navbar-bg-color: #C8E2F8;
+  --main-bg-color: #D9D9D9;
+  --gui-color: #929191;
+}
+
+* {
+  font-family: "Kanit", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  padding: 0;
+  margin: 0;
+  color: var(--font-color);
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  line-height: 1; 
+}
