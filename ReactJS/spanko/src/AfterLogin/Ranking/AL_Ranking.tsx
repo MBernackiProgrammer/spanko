@@ -1,6 +1,6 @@
-import './AL_MainPage.css';
+import './AL_Profile.css';
 
-export default function AL_MainPage() {
+export default function AL_Profile() {
   return (
     <>
       <div className='AL_MainPage_D_MainFrame'>

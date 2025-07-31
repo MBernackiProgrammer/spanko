@@ -1,16 +1,16 @@
-.AL_MainPage_D_MainFrame
+.AL_Settings_D_MainFrame
 {
     padding: 20px;
 }
 
-.P_Ranking
+.AL_Settings_P_Settings
 {
     color: var(--gui-color);
     font-size: 3em;
     margin-bottom: 10px;
 }
 
-.HR_Ranking
+.AL_Settings_HR_Settings
 {
     background-color: var(--gui-color);
 }
