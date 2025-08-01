@@ -1,0 +1,24 @@
+.C_UserRow_MainFrame
+{
+    display: flex;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    align-items: center;
+}
+
+.C_UserRow_D_UserIcon
+{
+    aspect-ratio: 1 / 1;
+    width: 50px;
+    border-radius: 25px;
+    background-color: red;
+    
+}
+
+.C_UserRow_D_MiddleRow
+{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
