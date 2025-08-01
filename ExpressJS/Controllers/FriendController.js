@@ -1,167 +1,446 @@
-var DBConnection = require('./../DBConnection')
+var DBConnection = require('./../Shared/DBConnection')
 
-exports.TestDatabaseConnnection = (req, res) =>
+function UserCheck(input)
 {
-    var query = 'select * from public.user';
-    DBConnection.any(query)
-    .then((data) => {
-    res.json({
-        title : `Success.`,
-        message : `Operation done succesfully.`,
-        query_result : data,
-    })})
-    .catch((error) => {
-    res.json({
-        title : `Error.`,
-        error_message : error,
-    })});
+    var query = `SELECT id FROM public.user WHERE id = ${input}`
+
+    return DBConnection.any(query).then((data)=>{
+        if(data != null)
+        {
+            return true
+        }
+        else
+        {
+            return false
+        }
+    }).catch((error)=>{console.log(error)})
 }
 
-exports.GetFriendList = (req, res) => 
-{
-    var userid = req.params['userid'];
-    var query = `SELECT user_one_id, user_two_id FROM public.friendlist WHERE user_one_id = ${userid} OR user_two_id = ${userid}`
-
-    DBConnection.any(query)
-    .then((data) =>{
-        res.json({
-            title : `Success`, 
-            message : `Operation done succesfully.`,
-            data : data,
+const activeSession = async (req, res) => {
+    if(!req.cookies || !req.cookies.expressSession)
+    {
+        return Promise.resolve(-1);
+    }
+    else
+    {
+        const token = req.cookies.expressSession.toString().substring(1, req.cookies.expressSession.toString().length-1);        
+        const query = `SELECT * from public.session where session_token='${token}';`;
+    
+        return DBConnection.oneOrNone(query)
+        .then((data) => {
+            console.log('success');
+    
+            if(data)
+            {
+                return data;               
+            }
+            else
+            {                
+                res.clearCookie('expressSession', { httpOnly: true });
+                return -1;
+            }
         })
-    })
-    .catch((error) =>{
-        res.json({
-            title : 'Error',
-            data : error,
-        })
-    })
+        .catch((error) => {
+            console.log('ERROR', error)
+            return -1;
+        });
+    }
 }
 
-exports.EndFriendship = (req, res) => 
-{
-    var input = req.body;
-    var userid = input.userid;
-    var userid_to_delete = input.userid_to_delete;
-
-    var query = `DELETE FROM friendlist WHERE user_one_id = ${userid} AND user_two_id = ${userid_to_delete}  OR user_one_id = ${userid_to_delete} AND user_two_id = ${userid}`
-
-    DBConnection.any(query)
-    .then((data) =>{
+exports.GetAllFromFriendsList = async (req, res) => 
+{   
+    if(!req.cookies || !req.cookies.expressSession)
+    {
         res.json({
-            title : `Success`,
-            message : `Operation done succesfully.`,
-            deleted_userid : userid_to_delete,
-            data : data,
+            success : false,
+            input : req,
+            title : "Cookie failure.",
+            message : "There is a problem with Cookies.",
         })
-    })
-    .catch((error) =>{
-        res.json({
-            title : 'Error',
-            data : error,
-        })
-    })
-}
+    }
+    else
+    {
+        var userID = req.params['user_id'];
 
-exports.GetFriendInvitationList = (req, res) =>
-{
-    var userid = req.headers['userid'];
-    var query = `SELECT user_one_id, user_two_id FROM friendinvitations WHERE user_one_id = ${userid} OR user_two_id = ${userid}`
-
-    DBConnection.any(query)
-    .then((data) =>{
-        res.json({
-            title : `Success`, 
-            message : `Operation done succesfully.`,
-            data : data,
-        })
-    })
-    .catch((error) =>{
-        res.json({
-            title : 'Error',
-            data : error,
-        })
-    })
-}
-
-exports.SendFriendInvitation = (req, res) => 
-{
-    var input = req.body;
-    var userid = input.userid;
-    var user_id_to_add = input.user_id_to_add;
-    var query = `INSERT INTO friendinvitations (user_one_id, user_two_id) VALUES (${userid}, ${user_id_to_add})`
-
-    DBConnection.any(query)
-    .then((data) =>{
-        res.json({
-            title : `Success`,
-            message : `Operation done succesfully.`,
-            invited_userid : user_id_to_add,
-            data : data,
-        })
-    })
-    .catch((error) =>{
-        res.json({
-            title : 'Error',
-            data : error,
-        })
-    })
-}
-
-exports.AcceptFriendInvitation = (req, res) => 
-{
-    var input = req.body;
-    var userid = input.userid;
-    var userid_to_accept = input.userid_to_accept;
-
-    var query_1 = `DELETE FROM friendinvitations WHERE user_one_id = ${userid} AND user_two_id = ${userid_to_accept}  OR user_one_id = ${userid_to_accept} AND user_two_id = ${userid}`
-    DBConnection.any(query_1)
-    .then(() =>{
-        var query_2 = `INSERT INTO friendinvitations (user_one_id, user_two_id) VALUES (${userid}, ${user_id_to_add})`
-        DBConnection.any(query_2)
-        .then((data) =>{
-            res.json({
-                title : "Success",
-                message : `Operation done succesfully.`,
-                userid_who_invited : userid_to_accept,
-                data : data
+        if(await UserCheck(userID))
+        {
+            var query = `SELECT user_one_id, user_two_id FROM friendlist WHERE user_one_id = ${userID} OR user_two_id = ${userID}`
+            DBConnection.any(query).then((data)=>{
+                if(data.length == 0)
+                {
+                    res.json({
+                        success : true,
+                        friends_to_show : false,
+                        input : userID,
+                        data : data,
+                        title : "Success.",
+                        message : "There are no friends to show.",
+                    })
+                }
+                else
+                {
+                    res.json({
+                        success : true,
+                        friends_to_show : true,
+                        data : data,
+                        title : "Success.",
+                        message : "There are friends to show.",
+                    })
+                }
+            }).catch((error) =>{
+                res.json({
+                    success : false,
+                    input : userID,
+                    error : error,
+                    title : "Error.",
+                    message : "Operation ended with an error.",
+                })
             })
-        })
-        .catch((error) =>{
+        }
+        else
+        {
             res.json({
-                title : 'Error',
-                data : error,
+                success : false,
+                input : userID,
+                title : "Failure.",
+                message : "User doesn't exist.",
             })
-        })
-    })
-    .catch((error) =>{
-        res.json({
-            title : 'Error',
-            data : error,
-        })
-    })
+        }
+    }
 }
 
-exports.DeclineFriendInvitation = (req, res) => 
+exports.EndAFriendship = async (req, res) => 
 {
-    var input = req.body;
-    var userid = input.userid;
-    var userid_to_decline = input.userid_to_decline;
-    var query = `DELETE FROM friendinvitations WHERE user_one_id = ${userid} AND user_two_id = ${userid_to_decline}  OR user_one_id = ${userid_to_decline} AND user_two_id = ${userid}`
+    if(!req.cookies || !req.cookies.expressSession)
+    {
+        res.json({
+            success : false,
+            input : req,
+            title : "Cookie failure.",
+            message : "There is a problem with Cookies.",
+        })
+    }
+    else
+    {
+        var userID = req.body.user_id;
+        var userIDToEndFriendshipWith = req.body.user_id_to_end_friendship_with;
 
-    DBConnection.any(query)
-    .then((data) =>{
+        if(await UserCheck(userID) && await UserCheck(userIDToEndFriendshipWith))
+        {
+            var query_1 = `SELECT * FROM friendlist WHERE user_one_id = ${userID} AND user_two_id = ${userIDToEndFriendshipWith} OR user_one_id = ${userIDToEndFriendshipWith} AND user_two_id = ${userID}`
+
+            DBConnection.any(query_1).then((data)=>{
+                if(data.length > 0)
+                {
+                    var query_2 = `DELETE FROM friendlist WHERE user_one_id = ${userID} AND user_two_id = ${userIDToEndFriendshipWith}  OR user_one_id = ${userIDToEndFriendshipWith} AND user_two_id = ${userID}`
+
+                    DBConnection.any(query_2).then((data)=>{
+                        res.json({
+                            success : true,
+                            ended_friendship_with_user_id : userIDToEndFriendshipWith,
+                            input: req.body,
+                            data : data,
+                            title : `Success.`,
+                            message : `Friendship ended.`,
+                        })
+                    }).catch((error)=>{
+                        res.json({
+                            success : false,
+                            input : req.body,
+                            error : error,
+                            title : "Error.",
+                            message : "Operation ended with an error.",
+                        })
+                    })
+                }
+                else
+                {
+                    res.json({
+                        success : false,
+                        input : req.body,
+                        title : "Failure",
+                        message : "They weren't friends.",
+                    })
+                }
+            }).catch((error)=>{
+                res.json({
+                    success : false,
+                    input : req.body,
+                    error : error,
+                    title : "Error.",
+                    message : "Operation ended with an error.",
+                })
+            })
+        }
+        else
+        {
+            res.json({
+                success : false,
+                input : req.body,
+                title : "Failure.",
+                message : "One of the Users doesn't exist.",
+            }) 
+        }
+    }
+}
+
+exports.GetAllFromFriendInvitationsList = async (req, res) =>
+{   
+    if(!req.cookies || !req.cookies.expressSession)
+    {
         res.json({
-            title : `Success`,
-            message : `Operation done succesfully.`,
-            userid_who_invited : userid_to_decline,
-            data : data
+            success : false,
+            input : req,
+            title : "Cookie failure.",
+            message : "There is a problem with Cookies.",
         })
-    })
-    .catch((error) =>{
+    }
+    else
+    {
+        var userID = req.params['user_id'];
+
+        if(await UserCheck(userID))
+        {
+            var query = `SELECT user_one_id, user_two_id FROM friendlist_invitations WHERE user_one_id = ${userID} OR user_two_id = ${userID}`
+            DBConnection.any(query).then((data)=>{
+                if(data.length == 0)
+                {
+                    res.json({
+                        success : true,
+                        friends_to_show : false,
+                        input : userID,
+                        data : data,
+                        title : "Success.",
+                        message : "There are no friends list invites to show.",
+                    })
+                }
+                else
+                {
+                    res.json({
+                        success : true,
+                        friends_to_show : true,
+                        data : data,
+                        title : "Success.",
+                        message : "There are friend list invites to show.",
+                    })
+                }
+            }).catch((error) =>{
+                res.json({
+                    success : false,
+                    input : userID,
+                    error : error,
+                    title : "Error.",
+                    message : "Operation ended with an error.",
+                })
+            })
+        }
+        else
+        {
+            res.json({
+                success : false,
+                input : userID,
+                title : "Failure.",
+                message : "User doesn't exist.",
+            })
+        }
+    }
+}
+
+exports.SendAnInvitationToFriendslist = async (req, res) => 
+{
+    if(!req.cookies || !req.cookies.expressSession)
+    {
         res.json({
-            title : 'Error',
-            data : error,
+            success : false,
+            input : req,
+            title : "Cookie failure.",
+            message : "There is a problem with Cookies.",
         })
-    })
+    }
+    else
+    {
+        var userID = req.body.user_id;
+        var userIDToInvite = req.body.user_id_to_invite;
+
+        if(await UserCheck(userID) && await UserCheck(userIDToInvite))
+        {
+            var query_1 = `SELECT * FROM friendlist_invitations WHERE user_one_id = ${userID} AND user_two_id = ${userIDToInvite} OR user_one_id = ${userIDToInvite} AND user_two_id = ${userID}`
+            DBConnection.any(query_1).then((data)=>{
+                if(data.length > 0)
+                {
+                    res.json({
+                        success : false,
+                        input : req.body,
+                        data : data,
+                        title : "Failure.",
+                        message : "An invite has alredy been sent.",
+                    })
+                }
+                else
+                {
+                    var query_2 = `INSERT INTO friendlist_invitations (user_one_id, user_two_id) VALUES (${userID}, ${userIDToInvite})`
+                    DBConnection.any(query_2).then((data)=>{
+                        res.json({
+                            success : true,
+                            input : req.body,
+                            data : data,
+                            title : "Success.",
+                            message : "Invite sent."
+                        })
+                    }).catch((error) =>{
+                        res.json({
+                            success : false,
+                            input : req.body,
+                            error : error,
+                            title : "Error.",
+                            message : "Operation ended with an error.",
+                        })
+                    })
+                }
+            })
+        }
+        else
+        {
+            res.json({
+                success : false,
+                input : req.body,
+                title : "Failure.",
+                message : "One of the Users doesn't exist.",
+            })
+        }   
+    }
+}
+
+exports.AcceptFriendListInvitation = async (req, res) => 
+{
+    if(!req.cookies || !req.cookies.expressSession)
+    {
+        res.json({
+            success : false,
+            input : req,
+            title : "Cookie failure.",
+            message : "There is a problem with Cookies.",
+        })
+    }
+    else
+    {
+        var userID = req.body.user_id;
+        var userIDToAccept = req.body.userid_to_accept;
+        if(await UserCheck(userID) && await UserCheck(userIDToAccept))
+        {
+            var query_1 = `SELECT * FROM friendlist_invitations WHERE user_one_id = ${userID} AND user_two_id = ${userIDToAccept}  OR user_one_id = ${userIDToAccept} AND user_two_id = ${userID}`
+            DBConnection.any(query_1).then((data)=>{
+                if(data.length > 0)
+                {
+                    var query_2 = `DELETE FROM friendlist_invitations WHERE user_one_id = ${userID} AND user_two_id = ${userIDToAccept}  OR user_one_id = ${userIDToAccept} AND user_two_id = ${userID}`
+                    DBConnection.any(query_2).then((data)=>{
+                        var query_3 = `INSERT INTO friendlist (user_one_id, user_two_id) VALUES (${userID}, ${userIDToAccept})`
+                        DBConnection.any(query_3).then((data)=>{
+                            res.json({
+                                success : true,
+                                data : data,
+                                input : req.body,
+                                title : "Success.",
+                                message : "Accepted the invitation.",
+                            })
+                        }).catch((error)=>{
+                            res.json({
+                                success : false,
+                                input : req.body,
+                                error : error,
+                                title : "Failure.",
+                                message : "Operation ended with a failure.",
+                            })
+                        })
+                    }).catch((error)=>{
+                        res.json({
+                            success : false,
+                            input : req.body,
+                            error : error,
+                            title : "Error.",
+                            message : "Operation ended with a failure.",
+                        })
+                    })
+                }
+                else
+                {
+                    res.json({
+                        success : false,
+                        input : req.body,
+                        error : error,
+                        title : "Failure.",
+                    })
+                }
+            }).catch((error)=>{
+                res.json({
+                    success : false,
+                    input : req.body,
+                    error : error,
+                    title : "Error",
+                    message : "Operation ended with an error.",
+                })
+            })
+        }
+    }
+}
+
+exports.DeclineFriendListInvitation = async (req, res) => 
+{
+    if(!req.cookies || !req.cookies.expressSession)
+    {
+        res.json({
+            success : false,
+            input : req,
+            title : "Cookie failure.",
+            message : "There is a problem with Cookies.",
+        })
+    }
+    else
+    {
+        var userID = req.body.user_id;
+        var userIDToDecline = req.body.userid_to_decline;
+        if(await UserCheck(userID) && await UserCheck(userIDToDecline))
+        {
+            var query_1 = `SELECT * FROM friendlist_invitations WHERE user_one_id = ${userID} AND user_two_id = ${userIDToDecline}  OR user_one_id = ${userIDToDecline} AND user_two_id = ${userID}`
+            DBConnection.any(query_1).then((data)=>{
+                if(data.length > 0)
+                {
+                    var query_2 = `DELETE FROM friendlist_invitations WHERE user_one_id = ${userID} AND user_two_id = ${userIDToDecline}  OR user_one_id = ${userIDToDecline} AND user_two_id = ${userID}`
+                    DBConnection.any(query_2).then((data)=>{
+                        res.json({
+                            success : true,
+                            input : req.body,
+                            data : data,
+                            title : "Success.",
+                            message : "Declined the invitation.",
+                        })
+                    }).catch((error)=>{
+                        res.json({
+                            success : false,
+                            input : req.body,
+                            error : error,
+                            title : "Error.",
+                            message : "Operation ended with a failure.",
+                        })
+                    })
+                }
+                else
+                {
+                    res.json({
+                        success : false,
+                        input : req.body,
+                        data : data,
+                        title : "Failure.",
+                        message : "There wasn't an invite.",
+                    })
+                }
+            }).catch((error)=>{
+                res.json({
+                    title : "Error",
+                    message : "Operation ended with an error.",
+                    error : error,
+                })
+            })
+        }
+    }
 }
