@@ -1,4 +1,4 @@
-import { BrowserRouter as Routes, Route, BrowserRouter } from 'react-router-dom';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import C_NavBar from './AfterLogin/NavBar/C_NavBar';
 import AL_MainPage from './AfterLogin/MainPage/AL_MainPage';
 import AL_Profile from './AfterLogin/Profile/AL_MainPage';
