@@ -1,0 +1,178 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Task Management API",
+        "description": "Diseño de API RESTful para Gestión de Tareas",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/tasks": {
+            "get": {
+                "summary": "Obtiene una lista de todas las tareas.",
+                "responses": {
+                    "200": {
+                        "description": "Lista de tareas",
+                        "content": {
+                            "application/json": {
+                                "example": [
+                                    {
+                                        "id": "1",
+                                        "title": "Estudiar diseño de API",
+                                        "description": "Revisar conceptos básicos y ejemplos",
+                                        "status": "pendiente"
+                                    },
+                                    {
+                                        "id": "2",
+                                        "title": "Comprar materiales",
+                                        "description": "Comprar materiales para el proyecto",
+                                        "status": "completado"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Crea una nueva tarea.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "title": "Nueva tarea",
+                                "description": "Descripción de la nueva tarea",
+                                "status": "pendiente"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tarea creada con éxito",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "id": 3,
+                                    "title": "Nueva tarea",
+                                    "description": "Descripción de la nueva tarea",
+                                    "status": "pendiente"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/{id}": {
+            "get": {
+                "summary": "Obtiene los detalles de una tarea específica por su ID.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "example": [
+                                    {
+                                        "id": "1",
+                                        "title": "Estudiar diseño de API",
+                                        "description": "Revisar conceptos básicos y ejemplos",
+                                        "status": "pendiente"
+                                    },
+                                    {
+                                        "id": "2",
+                                        "title": "Comprar materiales",
+                                        "description": "Comprar materiales para el proyecto",
+                                        "status": "completado"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Recurso no encontrado"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Actualiza una tarea existente por su ID.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "title": "Estudiar diseño de API (actualizado)",
+                                "description": "Revisar conceptos básicos y ejemplos (actualizado)",
+                                "status": "completado"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "id": 1,
+                                    "title": "Estudiar diseño de API (actualizado)",
+                                    "description": "Revisar conceptos básicos y ejemplos (actualizado)",
+                                    "status": "completado"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Recurso no encontrado"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Elimina una tarea por su ID.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Tarea eliminada con éxito"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": ""
+                    }
+                }
+            }
+        }
+    }
+}
