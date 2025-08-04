@@ -1,6 +1,7 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import './C_NavBar.css';
 import { Link, NavLink } from 'react-router-dom';
+import { useForm, type SubmitHandler } from "react-hook-form";
 
 let isSleeping = false;
 let interval:any;
@@ -16,7 +17,34 @@ export default function C_NavBar({ children }: { children: React.ReactNode }) {
   const cln2Ref = useRef<HTMLImageElement>(null);
 
   const [timerText, setText] = useState<string>('Start sleep');
-  
+
+  const onSubmit: SubmitHandler<{username:string, password:string}> = (data) => {
+
+    //Szykuje header do rządania 
+    const requestOptions:RequestInit = {
+        credentials: 'omit', 
+        method:'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body:JSON.stringify(
+          { 
+            username: data.username, 
+            password:data.password 
+          }
+        )
+    };
+    
+    //Wysyła rządanie na serwer 
+    fetch('https://172.24.3.142:3001/api/history', requestOptions)
+    .then(async (response) => {
+        //Tutaj można się odwołać do objektu z danymi 
+        const jsonObj = await response.json();
+    })
+    .catch(err => {
+        //Zwraca błąd 
+        console.log(err);                
+    });
+  }
+    
   function toogle()
   {
     console.log(isSleeping);

@@ -10,23 +10,29 @@ import AL_Friends from './AfterLogin/Friends/AL_Friends';
 
 
 function App() {
+  if(!localStorage.getItem("token"))
+  {
+    return (
+      <BL_Login />
+    );
+  }
+
   return (
     <BrowserRouter>
-    <C_NavBar>
-        <Routes>
-          <Route path="/" element={<AL_MainPage />} />
-          <Route path="/profile" element={<AL_Profile />} />
-          <Route path="/rank" element={<AL_Ranking />} />
-          <Route path="/settings" element={<AL_Settings />} />
+      <C_NavBar>
+          <Routes>
+            <Route path="/" element={<AL_MainPage />} />
+            <Route path="/profile" element={<AL_Profile />} />
+            <Route path="/rank" element={<AL_Ranking />} />
+            <Route path="/settings" element={<AL_Settings />} />
 
-          <Route path="/friends" element={<AL_Friends/>}></Route>
+            <Route path="/friends" element={<AL_Friends/>}></Route>
 
-          <Route path="/login" element={<BL_Login />} />
-          <Route path="/register" element={<BL_Registration />} />
-        </Routes>
-    </C_NavBar>
-      </BrowserRouter>
-    
+            <Route path="/login" element={<BL_Login />} />
+            <Route path="/register" element={<BL_Registration />} />
+          </Routes>
+      </C_NavBar>
+    </BrowserRouter>
   );
 }
 
