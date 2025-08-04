@@ -16,6 +16,7 @@ function UserCheck(input)
             return false
         }
     }).catch((error)=>{
+        console.log("Error in UserCheck.")
         console.log(error)
 
         return "Check API console."
@@ -32,7 +33,7 @@ const activeSession = async (req, res) => {
     else
     {
         return jwt.verify(token, Static.key , (error, user) =>{
-            console.log("Error.");
+            console.log("Error in activeSession.");
             console.log(error);
             if(error)
             {
@@ -51,7 +52,7 @@ exports.GetAllFromFriendsList = async (req, res) =>
     activeSession(req, res).then(()=>{
         if(req.user)
         {
-            var userID = req.params['user_id'];
+            var userID = req.user.account_id;
             if(UserCheck(userID))
             {
                 var query = `SELECT user_one_id, user_two_id FROM friendlist WHERE user_one_id = ${userID} OR user_two_id = ${userID}`
@@ -61,7 +62,6 @@ exports.GetAllFromFriendsList = async (req, res) =>
                         res.json({
                             success : true,
                             friends_to_show : false,
-                            input : userID,
                             data : data,
                         })
                     }
@@ -70,14 +70,12 @@ exports.GetAllFromFriendsList = async (req, res) =>
                         res.json({
                             success : true,
                             friends_to_show : true,
-                            input : userID,
                             data : data,
                         })
                     }
                 }).catch((error) =>{
                     res.json({
                         success : false,
-                        input : userID,
                         error : error,
                         message : "Error. Query ended with an error."
                     })
@@ -87,7 +85,6 @@ exports.GetAllFromFriendsList = async (req, res) =>
             {
                 res.json({
                     success : false,
-                    input : userID,
                     message : "Failure. User might not exist exist.",
                     user_check_output : UserCheck(userID)
                 })
@@ -97,14 +94,12 @@ exports.GetAllFromFriendsList = async (req, res) =>
         {
             res.json({
                 success : false,
-                input : req,
                 message : "Failure. Session is not valid."
             })
         }
     }).catch((error)=>{
         res.json({
             success : false,
-            input : req,
             error : error,
             message : "Error. Session check ended with an error."
         })
@@ -116,7 +111,7 @@ exports.EndAFriendship = async (req, res) =>
     activeSession(req, res).then(()=>{
         if(req.user)
         {
-            var userID = req.body.user_id;
+            var userID = req.user.account_id;
             var userIDToEndFriendshipWith = req.body.user_id_to_end_friendship_with;
             if(UserCheck(userID) && UserCheck(userIDToEndFriendshipWith))
             {
@@ -129,13 +124,11 @@ exports.EndAFriendship = async (req, res) =>
                             res.json({
                                 success : true,
                                 ended_friendship_with_user_id : userIDToEndFriendshipWith,
-                                input : req.body,
                                 data : data,
                             })
                         }).catch((error)=>{
                             res.json({
                                 success : false,
-                                input : req.body,
                                 error : error,
                                 message : "Error in the second query.",
                             })
@@ -145,7 +138,6 @@ exports.EndAFriendship = async (req, res) =>
                     {
                         res.json({
                             success : false,
-                            input : req.body,
                             data : data,
                             message : "Failure. They weren't friends.",
                         })
@@ -153,7 +145,6 @@ exports.EndAFriendship = async (req, res) =>
                 }).catch((error)=>{
                     res.json({
                         success : false,
-                        input : req.body,
                         error : error,
                         message : "Error in the first query.",
                     })
@@ -163,7 +154,6 @@ exports.EndAFriendship = async (req, res) =>
             {
                 res.json({
                     success : false,
-                    input : userID,
                     message : "Failure. One of the users might not exist exist.",
                     user_check_output_1 : UserCheck(userID),
                     user_check_output_2 : UserCheck(userIDToEndFriendshipWith),
@@ -174,14 +164,12 @@ exports.EndAFriendship = async (req, res) =>
         {
             res.json({
                 success : false,
-                input : req,
                 message : "Failure. Session is not valid."
             })
         }
     }).catch((error)=>{
         res.json({
             success : false,
-            input : req,
             error : error,
             message : "Error. Session check ended with an error."
         })
@@ -193,7 +181,7 @@ exports.GetAllFromFriendInvitationsList = async (req, res) =>
     activeSession(req, res).then(()=>{
         if(req.user)
         {
-            var userID = req.params['user_id'];
+            var userID = req.user.account_id;
             if(UserCheck(userID))
             {
                 var query = `SELECT user_one_id, user_two_id FROM friendlist_invitations WHERE user_one_id = ${userID} OR user_two_id = ${userID}`
@@ -203,7 +191,6 @@ exports.GetAllFromFriendInvitationsList = async (req, res) =>
                         res.json({
                             success : true,
                             friends_to_show : false,
-                            input : userID,
                             data : data,
                         })
                     }
@@ -212,14 +199,12 @@ exports.GetAllFromFriendInvitationsList = async (req, res) =>
                         res.json({
                             success : true,
                             friends_to_show : true,
-                            input : userID,
                             data : data,
                         })
                     }
                 }).catch((error) =>{
                     res.json({
                         success : false,
-                        input : userID,
                         error : error,
                         message : "Error. Query ended with a failure.",
                     })
@@ -229,7 +214,6 @@ exports.GetAllFromFriendInvitationsList = async (req, res) =>
             {
                 res.json({
                     success : false,
-                    input : userID,
                     message : "Failure. User might not exist exist.",
                     user_check_output : UserCheck(userID)
                 })
@@ -239,14 +223,12 @@ exports.GetAllFromFriendInvitationsList = async (req, res) =>
         {
             res.json({
                 success : false,
-                input : req,
                 message : "Failure. Session is not valid."
             })
         }
     }).catch((error)=>{
         res.json({
             success : false,
-            input : req,
             error : error,
             message : "Error. Session check ended with an error."
         })
@@ -258,7 +240,7 @@ exports.SendAnInvitationToFriendslist = async (req, res) =>
     activeSession(req, res).then(()=>{
         if(req.user)
         {
-            var userID = req.body.user_id;
+            var userID = req.user.account_id;
             var userIDToInvite = req.body.user_id_to_invite;
             if(UserCheck(userID) && UserCheck(userIDToInvite))
             {
@@ -268,7 +250,6 @@ exports.SendAnInvitationToFriendslist = async (req, res) =>
                     {
                         res.json({
                             success : false,
-                            input : req.body,
                             data : data,
                             message : "Failure. An invite has alredy been sent.",
                         })
@@ -279,13 +260,11 @@ exports.SendAnInvitationToFriendslist = async (req, res) =>
                         DBConnection.any(query_2).then((data)=>{
                             res.json({
                                 success : true,
-                                input : req.body,
                                 data : data,
                             })
                         }).catch((error) =>{
                             res.json({
                                 success : false,
-                                input : req.body,
                                 error : error,
                                 message : "Error. Query 2 ended with an error.",
                             })
@@ -294,7 +273,6 @@ exports.SendAnInvitationToFriendslist = async (req, res) =>
                 }).catch((error) =>{
                     res.json({
                         success : false,
-                        input : req.body,
                         error : error,
                         message : "Error. Query 1 ended with an error.",
                     })
@@ -304,7 +282,6 @@ exports.SendAnInvitationToFriendslist = async (req, res) =>
             {
                 res.json({
                     success : false,
-                    input : userID,
                     message : "Failure. One of the users might not exist exist.",
                     user_check_output_1 : UserCheck(userID),
                     user_check_output_2 : UserCheck(userIDToEndFriendshipWith),
@@ -315,14 +292,12 @@ exports.SendAnInvitationToFriendslist = async (req, res) =>
         {
             res.json({
                 success : false,
-                input : req,
                 message : "Failure. Session is not valid."
             })
         }
     }).catch((error)=>{
         res.json({
             success : false,
-            input : req,
             error : error,
             message : "Error. Session check ended with an error."
         })
@@ -334,7 +309,7 @@ exports.AcceptFriendListInvitation = async (req, res) =>
     activeSession(req, res).then(()=>{
         if(req.user)
         {
-            var userID = req.body.user_id;
+            var userID = req.user.account_id;
             var userIDToAccept = req.body.userid_to_accept;
             if(UserCheck(userID) && UserCheck(userIDToAccept))
             {
@@ -349,12 +324,10 @@ exports.AcceptFriendListInvitation = async (req, res) =>
                                 res.json({
                                     success : true,
                                     data : data,
-                                    input : req.body,
                                 })
                             }).catch((error)=>{
                                 res.json({
                                     success : false,
-                                    input : req.body,
                                     error : error,
                                     message : "Error. Query 3 ended with an error.",
                                 })
@@ -362,7 +335,6 @@ exports.AcceptFriendListInvitation = async (req, res) =>
                         }).catch((error)=>{
                             res.json({
                                 success : false,
-                                input : req.body,
                                 error : error,
                                 message : "Error. Query 2 ended with an error.",
                             })
@@ -372,7 +344,6 @@ exports.AcceptFriendListInvitation = async (req, res) =>
                     {
                         res.json({
                             success : false,
-                            input : req.body,
                             error : error,
                             title : "Failure.",
                         })
@@ -380,7 +351,6 @@ exports.AcceptFriendListInvitation = async (req, res) =>
                 }).catch((error)=>{
                     res.json({
                         success : false,
-                        input : req.body,
                         error : error,
                         message : "Error. Query 1 ended with an error.",
                     })
@@ -391,14 +361,12 @@ exports.AcceptFriendListInvitation = async (req, res) =>
         {
             res.json({
                 success : false,
-                input : req,
                 message : "Failure. Session is not valid."
             })
         }
     }).catch((error)=>{
         res.json({
             success : false,
-            input : req,
             error : error,
             message : "Error. Session check ended with an error."
         })
@@ -410,7 +378,7 @@ exports.DeclineFriendListInvitation = async (req, res) =>
     activeSession(req, res).then(()=>{
         if(req.user)
         {
-            var userID = req.body.user_id;
+            var userID = req.user.account_id;
             var userIDToDecline = req.body.userid_to_decline;
             if(UserCheck(userID) && UserCheck(userIDToDecline))
             {
@@ -422,7 +390,6 @@ exports.DeclineFriendListInvitation = async (req, res) =>
                         DBConnection.any(query_2).then((data)=>{
                             res.json({
                                 success : true,
-                                input : req.body,
                                 data : data,
                                 title : "Success.",
                                 message : "Declined the invitation.",
@@ -430,7 +397,6 @@ exports.DeclineFriendListInvitation = async (req, res) =>
                         }).catch((error)=>{
                             res.json({
                                 success : false,
-                                input : req.body,
                                 error : error,
                                 message : "Error. Query 2 ended with an error.",
                             })
@@ -440,7 +406,6 @@ exports.DeclineFriendListInvitation = async (req, res) =>
                     {
                         res.json({
                             success : false,
-                            input : req.body,
                             data : data,
                             title : "Failure.",
                             message : "There wasn't an invite.",
@@ -458,14 +423,12 @@ exports.DeclineFriendListInvitation = async (req, res) =>
         {
             res.json({
                 success : false,
-                input : req,
                 message : "Failure. Session is not valid."
             })
         }
     }).catch((error)=>{
         res.json({
             success : false,
-            input : req,
             error : error,
             message : "Error. Session check ended with an error."
         })
