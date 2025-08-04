@@ -10,6 +10,13 @@ import AL_Friends from './AfterLogin/Friends/AL_Friends';
 
 
 function App() {
+  if(!localStorage.getItem("token"))
+  {
+    return (
+      <BL_Login />
+    );
+  }
+
   return (
     <BrowserRouter>
       <C_NavBar>
@@ -26,7 +33,6 @@ function App() {
           </Routes>
       </C_NavBar>
     </BrowserRouter>
-    
   );
 }
 
