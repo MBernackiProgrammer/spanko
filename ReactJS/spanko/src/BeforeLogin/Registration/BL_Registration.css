@@ -1,0 +1,67 @@
+.D_BottomBox
+{
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    height: 300px;
+    background-color: white;
+}
+
+.D_LoginPanel
+{
+    width: 300px;
+    height: 400px;
+    background-color: white;
+    box-shadow: 5px 5px 5px rgb(146, 146, 146);
+    border-radius: 30px;
+    position: absolute;
+    left: calc(50% - 150px);
+    bottom: 0px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+.D_LoginPanel form input 
+{
+    width: calc(100% - 20px);
+    margin-bottom: 10px;
+    background-color: #BEE3FC8C;
+    border-radius: 20px;
+    border: none;
+    padding: 10px;
+}
+
+
+.D_LoginPanel form input :focus
+{
+    border: none;
+}
+
+.D_LoginButton
+{
+    background-color: #5986FF;
+    width: calc(100% - 80px);
+    margin: 20px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    border-radius: 20px;
+}
+
+.D_CloudeLogin_01
+{
+    margin-bottom: 50vh;
+    margin-left: -100px;
+    transition: margin-left 0.5s, opacity 0.5s;
+}
+
+.D_CloudeLogin_02
+{
+    margin-bottom: 55vh;
+    margin-left: 250px;
+    transition: margin-left 0.5s, opacity 0.5s;
+}
