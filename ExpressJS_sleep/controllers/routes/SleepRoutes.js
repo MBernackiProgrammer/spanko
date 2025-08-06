@@ -6,6 +6,7 @@ const router=express.Router();
 
 router.get('/history', sleepController.history);
 router.get('/stats', sleepController.stats);
+router.get('/allData', sleepController.allData);
 
 router.post('/saveSleep', sleepController.saveSleep);
 

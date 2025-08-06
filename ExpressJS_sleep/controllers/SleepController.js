@@ -144,13 +144,14 @@ exports.allData = async (req,res)=>{
         activeSession(req, res).then(()=>{
             if(req.user){
     
-                const query = `select * from public.user join public.sleep on user.id=sleep.account_id;`;
+                const query = `select * from public.user join public.sleep on public.user.id=public.sleep.account_id;`;
                 
                 console.log(query)
                 
                 db.manyOrNone(query).then((result)=>{
                     
                     return_obj.accounts = result;
+                    res.json(return_obj);
     
                 }).catch((error)=>{
                     console.log(error);
