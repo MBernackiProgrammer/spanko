@@ -8,6 +8,20 @@ import C_AI from '../AI/C_AI';
 let isSleeping = false;
 let interval:any;
 
+type Account = {
+  username: string;
+  password: string;
+  start_time: string;
+  end_time: string;
+  hours: string;
+};
+
+type UserSummary = {
+  username: string;
+  longestSleepHours: string;
+  lastSleepHours: string;
+};
+
 export default function C_NavBar({ children }: { children: React.ReactNode }) {
   const cl1Ref = useRef<HTMLImageElement>(null);
   const cl2Ref = useRef<HTMLImageElement>(null);
@@ -228,6 +242,67 @@ export default function C_NavBar({ children }: { children: React.ReactNode }) {
     document.documentElement.style.setProperty('--main-bg-color', "#181C36");
   }
 
+  const [rows, setRows] = useState<UserSummary[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // 🔐 Wstaw swój JWT
+  const JWT_TOKEN = "<TWOJ_JWT_TUTAJ>";
+
+  useEffect(() => {
+    const fetchSleepData = async () => {
+      try {
+        const res = await fetch("https://172.24.3.142:3001/api/allData", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${JWT_TOKEN}`,
+          },
+        });
+
+        if (!res.ok) throw new Error("Błąd pobierania danych");
+
+        const data = await res.json();
+        const accounts: Account[] = data.accounts;
+
+        // Grupowanie po użytkowniku
+        const grouped: Record<string, Account[]> = {};
+        for (const entry of accounts) {
+          const key = `${entry.username}-${entry.password}`;
+          if (!grouped[key]) grouped[key] = [];
+          grouped[key].push(entry);
+        }
+
+        const summaries: UserSummary[] = Object.entries(grouped).map(([key, sessions]) => {
+          // Najdłuższy sen
+          const longest = sessions.reduce((max, curr) =>
+            parseFloat(curr.hours) > parseFloat(max.hours) ? curr : max
+          );
+
+          // Ostatni (najnowszy) sen
+          const latest = sessions.reduce((latest, curr) =>
+            new Date(curr.start_time) > new Date(latest.start_time) ? curr : latest
+          );
+
+          return {
+            username: longest.username,
+            longestSleepHours: longest.hours,
+            lastSleepHours: latest.hours,
+          };
+        });
+
+        setRows(summaries);
+      } catch (err: any) {
+        console.error("Błąd:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSleepData();
+  }, []);
+
   return (
     <>
       <C_AI></C_AI>
@@ -259,12 +334,12 @@ export default function C_NavBar({ children }: { children: React.ReactNode }) {
                 <div className='D_LastStats_SubFrame'>
                   <div className='D_LastStatsHolder'>
                     <p className='P_LastStatsTopText'>last spanko</p>
-                    <p className='P_LastStatsTimes'>2h</p>
+                    <p className='P_LastStatsTimes'>{rows[0].lastSleepHours}h</p>
                   </div>
 
                   <div className='D_LastStatsHolder'>
                     <p className='P_LastStatsTopText'>longest spanko</p>
-                    <p className='P_LastStatsTimes'>6h</p>
+                    <p className='P_LastStatsTimes'>{rows[0].longestSleepHours}h</p>
                   </div>
                 </div>
 
