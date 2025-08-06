@@ -20,7 +20,7 @@ export default function SleepScoreBoard() {
   const [error, setError] = useState<string | null>(null);
 
   // 🔐 Twój JWT tutaj
-  const JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50X2lkIjoiMzIiLCJpYXQiOjE3NTQ0Njc4MzAsImV4cCI6MTc1NDQ2OTYzMH0.Y09MlB_MYHEanj3Oe8xvBIBKn1wG3atxJuKEEEhvCvo";
+  const JWT_TOKEN = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchSleepData = async () => {
