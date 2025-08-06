@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import '../../AfterLogin/NavBar/C_NavBar.css'
 import './BL_Login.css'
 import { useForm, type SubmitHandler } from 'react-hook-form';
+import { accountsAPI } from '../../SharedElements/DomainsAPI/DomainsAPI';
 
 
 
@@ -36,7 +37,7 @@ function BL_Login() {
         if(registerForm){
 
           requestOptions.body = JSON.stringify({ username: data.username, password:data.password, email:email, phone:phone });
-          fetch('https://172.24.3.142:3000/api/users/create', requestOptions)
+          fetch(accountsAPI+'/api/users/create', requestOptions)
               .then(() => {
   
                   alert("successfully created account");
@@ -48,7 +49,7 @@ function BL_Login() {
 
         }else{
 
-          fetch('https://172.24.3.142:3000/api/users/login', requestOptions)
+          fetch(accountsAPI+'/api/users/login', requestOptions)
               .then(async (response) => {
                   const jsonObj = await response.json();
   

@@ -73,10 +73,37 @@ Date.prototype.addDays = function(days) {
 }
 
 
+exports.getCurrentAccount = async (req,res)=>{
+    {
+
+        const pgp = require('pg-promise')(/* options */)
+        const db = pgp(`postgres://${static.shared.db_user}:${static.shared.db_password}@${static.shared.db_address}/expressjs`)
+    
+        
+        activeSession(req, res).then(()=>{
+            if(req.user){
+    
+                const query = `select * from public.user where id=${req.user.account_id};`;
+                console.log(query)
+                
+                db.one(query).then((data)=>{
+                    
+                    res.json(data);
+    
+                }).catch((error)=>{
+                    console.log(error);
+                    res.json(false);
+                });    
+                
+            }else{
+                res.json(false);
+            }
+        }).catch((e)=>console.log(e));
+    }
+}
+
 exports.editAccount = async (req,res)=>{
-    if(!req.cookies || !req.cookies.expressSession){
-        res.json(false);
-    }else{
+    {
 
         const pgp = require('pg-promise')(/* options */)
         const db = pgp(`postgres://${static.shared.db_user}:${static.shared.db_password}@${static.shared.db_address}/expressjs`)
@@ -105,9 +132,7 @@ exports.editAccount = async (req,res)=>{
 }
 
 exports.updatePassword = async (req, res)=>{
-    if(!req.cookies || !req.cookies.expressSession){
-        res.json(false);
-    }else{
+    {
 
         const crypto = require('crypto');
 
