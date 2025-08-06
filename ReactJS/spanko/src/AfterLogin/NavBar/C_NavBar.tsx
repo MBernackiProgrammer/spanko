@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import './C_NavBar.css';
 import { Link, NavLink } from 'react-router-dom';
 import { useForm, type SubmitHandler } from "react-hook-form";
+import { sleepAPI } from '../../SharedElements/DomainsAPI/DomainsAPI';
 
 let isSleeping = false;
 let interval:any;
@@ -17,6 +18,10 @@ export default function C_NavBar({ children }: { children: React.ReactNode }) {
   const cln2Ref = useRef<HTMLImageElement>(null);
 
   const [timerText, setText] = useState<string>('Start sleep');
+
+  let [start_time] = useState<Date>(new Date());
+  let [end_time] = useState<Date>(new Date());
+  let [hours] = useState<number>();
 
   const onSubmit: SubmitHandler<{username:string, password:string}> = (data) => {
 
@@ -67,6 +72,19 @@ export default function C_NavBar({ children }: { children: React.ReactNode }) {
 
     setText("Start sleep");
 
+    
+    const now = new Date();
+    const milliseconds_elapsed = Math.abs(start_time!.getTime() - now.getTime());
+    
+    end_time = now;
+
+    // Total number of seconds in the difference
+    const totalSeconds = (milliseconds_elapsed / 1000);
+    // Total number of minutes in the difference
+    const totalMinutes = (totalSeconds / 60);
+    // Total number of hours in the difference
+    hours = (totalMinutes / 60);
+
     if (cl1Ref.current) {
       cl1Ref.current.style.bottom = "0px";
       cl1Ref.current.style.opacity = "1";
@@ -115,6 +133,22 @@ export default function C_NavBar({ children }: { children: React.ReactNode }) {
     }
 
     document.documentElement.style.setProperty('--main-bg-color', "#D9D9D9");
+
+    const requestOptions:RequestInit = {
+        credentials: 'omit', 
+        method:'POST', 
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` }, 
+        body:JSON.stringify({ hours: hours, start_time:start_time, end_time: end_time })
+    };
+
+    fetch(sleepAPI+"/api/saveSleep", requestOptions).then(()=>{
+      alert("Sleep session saved");
+    })
+    .catch((err)=>{
+      console.log(err)
+      alert(err);
+    })
+
   }
 
   function startSpanko() {
@@ -126,6 +160,8 @@ export default function C_NavBar({ children }: { children: React.ReactNode }) {
     let x = 0;
 
     setText("SPANKO STARTS");
+
+    start_time = new Date();
     
     interval = setInterval(()=>{
       if(isSleeping)
