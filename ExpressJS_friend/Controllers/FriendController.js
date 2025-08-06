@@ -4,8 +4,7 @@ const Static = require("./../Shared/Static")
 
 function UserCheck(input)
 {
-    // var query = `SELECT id FROM public.user WHERE id = ${input}`
-    var query = `SELECT CASE WHEN user_one_id=${input} THEN user_two_id WHEN user_two_id=${input} THEN user_one_id END AS user_${input}_friend WHERE user_one_id=${input} OR user_two_id=${input}`
+    var query = `SELECT id FROM public.user WHERE id = ${input}`
 
     return DBConnection.any(query).then((data)=>{
         if(data != null)
@@ -19,8 +18,7 @@ function UserCheck(input)
     }).catch((error)=>{
         console.log("Error in UserCheck.")
         console.log(error)
-
-        return "Check API console."
+        return
     })
 }
 
@@ -34,7 +32,6 @@ const activeSession = async (req, res) => {
     else
     {
         return jwt.verify(token, Static.key , (error, user) =>{
-            console.log("Error in activeSession.");
             console.log(error);
             if(error)
             {
@@ -56,8 +53,9 @@ exports.GetAllFromFriendsList = async (req, res) =>
             var userID = req.user.account_id;
             if(UserCheck(userID))
             {
+                console.log("test")
                 // var query = `SELECT user_one_id, user_two_id FROM friendlist WHERE user_one_id = ${userID} OR user_two_id = ${userID}`
-                var query = `SELECT CASE WHEN user_one_id=${input} THEN user_two_id WHEN user_two_id=${input} THEN user_one_id END AS user_${input}_friend FROM friendlist WHERE user_one_id=${input} OR user_two_id=${input}`
+                var query = `SELECT CASE WHEN user_one_id=${userID} THEN user_two_id WHEN user_two_id=${userID} THEN user_one_id END AS user_${userID}_friend FROM friendlist WHERE user_one_id=${userID} OR user_two_id=${userID}`
                 DBConnection.any(query).then((data)=>{
                     if(data.length == 0)
                     {
@@ -186,7 +184,7 @@ exports.GetAllFromFriendInvitationsList = async (req, res) =>
             var userID = req.user.account_id;
             if(UserCheck(userID))
             {
-                var query = `SELECT CASE WHEN user_one_id=${input} THEN user_two_id WHEN user_two_id=${input} THEN user_one_id END AS user_${input}_friend FROM friendlist_invitations WHERE user_one_id=${input} OR user_two_id=${input}`
+                var query = `SELECT CASE WHEN user_one_id=${userID} THEN user_two_id WHEN user_two_id=${userID} THEN user_one_id END AS user_${userID}_friend FROM friendlist_invitations WHERE user_one_id=${userID} OR user_two_id=${userID}`
                 DBConnection.any(query).then((data)=>{
                     if(data.length == 0)
                     {
