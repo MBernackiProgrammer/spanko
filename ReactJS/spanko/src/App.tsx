@@ -8,7 +8,6 @@ import BL_Login from './BeforeLogin/Login/BL_Login';
 import BL_Registration from './BeforeLogin/Registration/BL_Registration';
 import AL_Friends from './AfterLogin/Friends/AL_Friends';
 
-
 function App() {
   
   if(!localStorage.getItem("token"))
