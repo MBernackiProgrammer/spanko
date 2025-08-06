@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const generateAccessToken = (account_id) => {
-  return jwt.sign({account_id:account_id}, static.shared.key, { expiresIn: '1800s' });
+  return jwt.sign({account_id:account_id}, static.shared.key, { expiresIn: '10800s' });
 }
 
 
