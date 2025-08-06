@@ -3,6 +3,7 @@ import './C_NavBar.css';
 import { Link, NavLink } from 'react-router-dom';
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { sleepAPI } from '../../SharedElements/DomainsAPI/DomainsAPI';
+import C_AI from '../AI/C_AI';
 
 let isSleeping = false;
 let interval:any;
@@ -28,7 +29,7 @@ export default function C_NavBar({ children }: { children: React.ReactNode }) {
     //Szykuje header do rządania 
     const requestOptions:RequestInit = {
         credentials: 'omit', 
-        method:'POST', 
+        method:'GET', 
         headers: { 'Content-Type': 'application/json' }, 
         body:JSON.stringify(
           { 
@@ -39,7 +40,7 @@ export default function C_NavBar({ children }: { children: React.ReactNode }) {
     };
     
     //Wysyła rządanie na serwer 
-    fetch('https://172.24.3.142:3001/api/history', requestOptions)
+    fetch('https://172.24.3.142:3001/api/allData', requestOptions)
     .then(async (response) => {
         //Tutaj można się odwołać do objektu z danymi 
         const jsonObj = await response.json();
@@ -229,6 +230,7 @@ export default function C_NavBar({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      <C_AI></C_AI>
       <div className='C_NavBar_D_MainFrame'>
         <div className='D_MainPage'>
           <div className='D_MainInFrame'>
