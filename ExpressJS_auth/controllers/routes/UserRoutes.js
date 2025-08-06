@@ -14,4 +14,7 @@ router.post('/users/editAccount', userController.editAccount);
 router.post('/users/updatePassword', userController.updatePassword);
 router.post('/users/setPassword', userController.setPassword);
 
+router.post('/users/uploadProfilePicture',userController.uploadProfilePicture)
+router.post('/users/downloadProfilePicture',userController.downloadProfilePicture)
+
 module.exports=router;

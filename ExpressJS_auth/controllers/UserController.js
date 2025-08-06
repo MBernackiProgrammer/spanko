@@ -1,6 +1,7 @@
 const static = require('../constants/static');
 const nodemailer = require('nodemailer'); 
 const jwt = require('jsonwebtoken');
+const { error } = require('console');
 
 
 const transporter = nodemailer.createTransport({
@@ -374,4 +375,41 @@ exports.setPassword = async (req, res)=>{
     .catch((error)=>{
         console.log(error);
     });
+}
+
+exports.uploadProfilePicture = async (req , res) =>
+{
+    try
+    {
+        var fileData = req.file.buffer
+        if(!fileData || !req.body)
+        {
+            console.error("Plik nie działa.")
+        }
+        else
+        {
+            const pgp = require('pg-promise')(/* options */)
+            const db = pgp(`postgres://${static.shared.db_user}:${static.shared.db_password}@${static.shared.db_address}/expressjs`);
+            var userID = req.body.user_id;
+            var imageFileName = req.body.image_file_name;
+            var query = `INSERT INTO (user_id, file_name, file_data) VALUES (${userID}, ${imageFileName}, ${fileData})`
+            db.any(query).then(res.json(true)).catch((error)=>{console.error(error);res.json(false)})
+        }
+    }
+    catch (error)
+    {
+        console.error(error)
+    }
+}
+
+exports.downloadProfilePicture = async (req , res) =>
+{
+    try
+    {
+
+    }
+    catch (error)
+    {
+        console.error(error)
+    }
 }
